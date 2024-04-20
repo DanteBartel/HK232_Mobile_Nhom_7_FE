@@ -7,4 +7,6 @@ npm install
 npx expo start
 
 ## Note
-Using Expo Go to scan and debug
+- Using Expo Go to scan and debug
+- Code all in English, not using i18n yet
+- Practise using Native Base as CSS and Redux

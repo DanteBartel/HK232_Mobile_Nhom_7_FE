@@ -1,4 +1,5 @@
 import { Config } from "@/Config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BaseQueryApi } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 import {
   createApi,
@@ -13,7 +14,15 @@ const baseQueryWithInterceptor = async (
   api: BaseQueryApi,
   extraOptions: {}
 ) => {
-  const result = await baseQuery(args, api, extraOptions);
+  const token = await AsyncStorage.getItem("@token");
+  let modifiedArgs: FetchArgs = typeof args === "string" ? { url: args } : args;
+
+  modifiedArgs.headers = {
+    ...modifiedArgs.headers,
+    Authorization: `Bearer ${token}`,
+  };
+
+  const result = await baseQuery(modifiedArgs, api, extraOptions);
   if (result.error && result.error.status === 401) {
     // here you can deal with 401 error
   }

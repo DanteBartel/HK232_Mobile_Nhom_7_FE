@@ -26,7 +26,7 @@ export const Home = (props: IHomeProps) => {
         <>
           <Text>{i18n.t(LocalizationKey.HOME)}</Text>
           <Heading color="primary.500" fontSize="md">
-            {data?.username}
+            {data?.firstName}
           </Heading>
         </>
       )}

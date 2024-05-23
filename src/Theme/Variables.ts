@@ -13,7 +13,7 @@ export enum Colors {
   INPUT_BACKGROUND = "#FFFFFF",
   WHITE = "#ffffff",
   TEXT = "#212529",
-  PRIMARY = "#E14032",
+  PRIMARY = "#4B9460",
   SUCCESS = "#28a745",
   ERROR = "#dc3545",
 }

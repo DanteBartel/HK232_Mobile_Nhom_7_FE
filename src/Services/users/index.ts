@@ -20,14 +20,10 @@ export interface Company {
 }
 
 export interface User {
-  address: Address;
-  company: Company;
+  firstName: string;
+  lastName: string;
   email: string;
-  id: number;
-  name: string;
-  phone: string;
-  username: string;
-  website: string;
+  address: string;
 }
 
 const userApi = API.injectEndpoints({
@@ -35,8 +31,11 @@ const userApi = API.injectEndpoints({
     getUser: build.query<User, string>({
       query: (id) => `users/${id}`,
     }),
+    viewProfile: build.query<User, void>({
+      query: () => "auth/viewProfile",
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useLazyGetUserQuery } = userApi;
+export const { useViewProfileQuery, useLazyGetUserQuery } = userApi;

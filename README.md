@@ -6,6 +6,9 @@ npm install
 ## Run the app
 npx expo start
 
+## Review app on web
+- Using Incognito mode to clear state and view welcome screen
+
 ## Build apk file
 eas build -p android --profile preview
 

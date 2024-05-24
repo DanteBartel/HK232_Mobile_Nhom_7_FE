@@ -6,6 +6,9 @@ import { MainNavigator } from "./Main";
 import { Welcome1Container, Welcome2Container, Welcome3Container } from "@/Screens/Welcome";
 import { RootScreens } from "@/Screens";
 
+import { useSelector } from "react-redux";
+import { RootState } from "@/Store";
+
 export type RootStackParamList = {
   [RootScreens.MAIN]: undefined;
   [RootScreens.WELCOME1]: undefined;
@@ -17,27 +20,35 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 // @refresh reset
 const ApplicationNavigator = () => {
+
+  const hasSeenWelcome = useSelector((state: RootState) => state.navigation.hasSeenWelcome)
+
   return (
     <NavigationContainer>
       <StatusBar />
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        <RootStack.Screen
-          name={RootScreens.WELCOME1}
-          component={Welcome1Container}
-        />
-        <RootStack.Screen
-          name={RootScreens.WELCOME2}
-          component={Welcome2Container}
-        />
-        <RootStack.Screen
-          name={RootScreens.WELCOME3}
-          component={Welcome3Container}
-        />
-        <RootStack.Screen
-          name={RootScreens.MAIN}
-          component={MainNavigator}
-          options={{}}
-        />
+        {hasSeenWelcome ? (
+          <RootStack.Screen
+            name={RootScreens.MAIN}
+            component={MainNavigator}
+            options={{}}
+          />
+        ) : (
+          <>
+            <RootStack.Screen
+              name={RootScreens.WELCOME1}
+              component={Welcome1Container}
+            />
+            <RootStack.Screen
+              name={RootScreens.WELCOME2}
+              component={Welcome2Container}
+            />
+            <RootStack.Screen
+              name={RootScreens.WELCOME3}
+              component={Welcome3Container}
+            />
+          </> 
+        )}
       </RootStack.Navigator>
     </NavigationContainer>
   );

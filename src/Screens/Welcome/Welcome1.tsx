@@ -6,11 +6,22 @@ import { Button } from "native-base";
 import ImageViewer from '@/Components/ImageViewer';
 import { RootScreens } from "..";
 
+import { useDispatch } from "react-redux";
+import { setHasSeenWelcome } from "@/Store/reducers";
+
 const PlaceholderImage = require('./Mobile-payments-bro-1.png');
 
 export const Welcome1 = (props: {
   onNavigate: (string: RootScreens) => void;
 }) => {
+
+  const dispatch = useDispatch()
+
+  const handleCompleteWelcome = () => {
+    dispatch(setHasSeenWelcome({hasSeenWelcome: true}))
+    props.onNavigate(RootScreens.MAIN)
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -27,7 +38,7 @@ export const Welcome1 = (props: {
       <View style={styles.footerContainer}>
         <Pressable 
           style={styles.button01}
-          onPress={() => props.onNavigate(RootScreens.MAIN)}
+          onPress={handleCompleteWelcome}
         >
           <Text>Skip</Text>
         </Pressable>

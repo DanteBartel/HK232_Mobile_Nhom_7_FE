@@ -33,7 +33,7 @@ export interface User {
 const userApi = API.injectEndpoints({
   endpoints: (build) => ({
     getUser: build.query<User, string>({
-      query: (id) => `users/${id}`,
+      query: (id) => `/users/${id}`,
     }),
   }),
   overrideExisting: true,

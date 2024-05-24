@@ -1,5 +1,5 @@
 export interface Transaction {
-    id: number;
-    amount: number;
-    type: string;
-  }
+  id: number;
+  amount: number;
+  type: string;
+}

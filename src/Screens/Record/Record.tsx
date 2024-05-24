@@ -1,9 +1,15 @@
 import { i18n, LocalizationKey } from "@/Localization";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { HStack, Spinner, Heading } from "native-base";
 import { User } from "@/Services";
+
+import { useState } from 'react';
+import { useSelector, useDispatch } from "react-redux";
+import { removeTransaction, editTransaction } from "@/Store/reducers";
+import { RootState } from "@/Store";
+import { Transaction } from "@/Services";
 
 export interface IRecordProps {
   data: User | undefined;
@@ -12,6 +18,18 @@ export interface IRecordProps {
 
 export const Record = (props: IRecordProps) => {
   const { data, isLoading } = props;
+
+  const transactions = useSelector((state: RootState) => state.transactions)
+  const dispatch = useDispatch()
+
+  const handleRemoveTransaction = (id: number) => {
+    dispatch(removeTransaction(id))
+  }
+
+  const handleEditTransaction = (id: number, changes: Pick<Transaction, 'amount' | 'type'>) => {
+    dispatch(editTransaction({ id, ...changes}))
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -25,9 +43,27 @@ export const Record = (props: IRecordProps) => {
       ) : (
         <>
           <Text>Record</Text>
-          <Heading color="primary.500" fontSize="md">
-            {data?.username}
-          </Heading>
+          <View>
+            <Text>Transactions</Text>
+            <View>
+              {transactions.allIds.map((id) => {
+                const transaction = transactions.byId[id]
+                return (
+                  <View key={id}>
+                    <Text>{transaction.type} - ${transaction.amount}</Text>
+
+                    <TouchableOpacity onPress={() => handleRemoveTransaction(id)}>
+                      <Text>Remove</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => handleEditTransaction(id, { amount: transaction.amount + 10, type: transaction.type })}>
+                      <Text>Edit</Text>
+                    </TouchableOpacity>
+                  </View>
+                )
+              })}
+            </View>
+          </View>
         </>
       )}
     </View>

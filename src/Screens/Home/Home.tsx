@@ -6,9 +6,8 @@ import { HStack, Spinner, Heading } from "native-base";
 import { User } from "@/Services";
 
 import { useState } from 'react';
-import { useSelector, useDispatch } from "react-redux";
-import { addTransaction, removeTransaction, editTransaction } from "@/Store/reducers";
-import { RootState } from "@/Store";
+import { useDispatch } from "react-redux";
+import { addTransaction } from "@/Store/reducers";
 import { Transaction } from "@/Services";
 
 
@@ -21,21 +20,12 @@ export const Home = (props: IHomeProps) => {
   const { data, isLoading } = props;
 
   // Test redux
-  const transactions = useSelector((state: RootState) => state.transactions)
   const dispatch = useDispatch()
   const [newTransaction, setNewTransaction] = useState<Omit<Transaction, 'id'>>({ type: '', amount: 0 })
 
   const handleAddTransaction = () => {
     dispatch(addTransaction(newTransaction))
     setNewTransaction({ type: '', amount: 0 })
-  }
-
-  const handleRemoveTransaction = (id: number) => {
-    dispatch(removeTransaction(id))
-  }
-
-  const handleEditTransaction = (id: number, changes: Pick<Transaction, 'amount' | 'type'>) => {
-    dispatch(editTransaction({ id, ...changes}))
   }
 
   return (
@@ -72,24 +62,6 @@ export const Home = (props: IHomeProps) => {
             />
             <Button title="Add Transaction" onPress={handleAddTransaction} />
 
-            <View>
-              {transactions.allIds.map((id) => {
-                const transaction = transactions.byId[id]
-                return (
-                  <View key={id}>
-                    <Text>{transaction.type} - ${transaction.amount}</Text>
-
-                    <TouchableOpacity onPress={() => handleRemoveTransaction(id)}>
-                      <Text>Remove</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => handleEditTransaction(id, { amount: transaction.amount + 10, type: transaction.type })}>
-                      <Text>Edit</Text>
-                    </TouchableOpacity>
-                  </View>
-                )
-              })}
-            </View>
           </View>
         </>
       )}

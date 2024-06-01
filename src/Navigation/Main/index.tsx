@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { View, Text } from "react-native"
 import { HomeContainer } from "@/Screens/Home";
 import { RecordContainer } from "@/Screens/Record";
 import { ChartContainer } from "@/Screens/Chart";
@@ -13,30 +15,27 @@ import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse'
 import { faFile } from '@fortawesome/free-solid-svg-icons/faFile'
 import { faChartPie } from '@fortawesome/free-solid-svg-icons/faChartPie'
 import { faPerson } from '@fortawesome/free-solid-svg-icons/faPerson'
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
+const Stack = createNativeStackNavigator()
 
-// @refresh reset
-export const MainNavigator = () => {
+const AddRecordScreen = () => {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+    </View>
+  )
+}
 
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      const token = await getAccessToken()
-      if (token) {
-        dispatch(setAccessToken(token))
-      }
-    }
-
-    initializeAuth()
-  }, [dispatch])
-
+const MainTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let icon = faHouse
+          let style = {}
+          size = 20
           if (route.name === "Home") {
             icon = faHouse
           } else if (route.name === "Record") {
@@ -45,8 +44,13 @@ export const MainNavigator = () => {
             icon = faChartPie
           } else if (route.name === "Me") {
             icon = faPerson
+          } else if (route.name === "AddRecord") {
+            icon = faCirclePlus
+            size = 40
+            style = { marginBottom: -15 }
+            color = '#86D09D'
           }
-          return <FontAwesomeIcon icon={icon} color={color} />
+          return <FontAwesomeIcon icon={icon} color={color} size={size} style={style} />
         },
         tabBarActiveTintColor: '#86D09D',
         tabBarInactiveTintColor: 'gray'
@@ -66,6 +70,19 @@ export const MainNavigator = () => {
           tabBarLabelPosition: "below-icon",
         }}
       />
+      <Tab.Screen 
+        name="AddRecord"
+        component={AddRecordScreen}
+        options={{
+          tabBarLabel: ""
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault()
+            navigation.navigate('AddRecordStack')
+          }
+        })}
+      />
       <Tab.Screen
         name="Chart"
         component={ChartContainer}
@@ -81,5 +98,42 @@ export const MainNavigator = () => {
         }}
       />
     </Tab.Navigator>
+  )
+}
+
+// @refresh reset
+export const MainNavigator = () => {
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const token = await getAccessToken()
+      if (token) {
+        dispatch(setAccessToken(token))
+      }
+    }
+
+    initializeAuth()
+  }, [dispatch])
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MainTabs"
+        component={MainTabs}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AddRecordStack"
+        component={AddRecordScreen}
+        options={{
+          presentation: 'modal',
+          gestureEnabled: true,
+          animation: 'slide_from_bottom',
+          headerShown: false
+        }}
+      />
+    </Stack.Navigator>
   );
 };

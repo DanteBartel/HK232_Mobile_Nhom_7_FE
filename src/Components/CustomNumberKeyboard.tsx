@@ -1,22 +1,28 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 
-const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+const numbers = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0']
 
 interface CustomNumberKeyboardProps {
   onPress: (value: string) => void
   onBackspace: () => void
 }
 
+function mapNumbers(numbers: string[], onPress: (value: string) => void, onBackspace: () => void) {
+  return (
+    numbers.map((number) => (
+      <TouchableOpacity key={number} style={styles.numberButton} onPress={() => onPress(number)}>
+        <Text style={styles.numberText}>{number}</Text>
+      </TouchableOpacity>
+    ))
+  )
+}
+
 const CustomNumberKeyboard: React.FC<CustomNumberKeyboardProps> = ({ onPress, onBackspace }) => {
   return (
     <View style={styles.container}>
       <View style={styles.numbersContainer}>
-        {numbers.map((number) => (
-          <TouchableOpacity key={number} style={styles.numberButton} onPress={() => onPress(number)}>
-            <Text style={styles.numberText}>{number}</Text>
-          </TouchableOpacity>
-        ))}
+        {mapNumbers(numbers, onPress, onBackspace)}
       </View>
       <TouchableOpacity style={styles.backspaceButton} onPress={onBackspace}>
         <Text style={styles.backspaceText}>⌫</Text>

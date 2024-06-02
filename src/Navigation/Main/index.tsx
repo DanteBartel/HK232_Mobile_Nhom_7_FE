@@ -154,9 +154,10 @@ export const MainNavigator = () => {
         name="NumberInputModal"
         component={NumberInputModal}
         options={{
-          presentation: 'modal',
+          presentation: 'transparentModal',
           gestureEnabled: true,
           animation: 'slide_from_bottom',
+          headerShown: false
         }}
       />
     </Stack.Navigator>

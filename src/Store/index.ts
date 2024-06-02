@@ -12,7 +12,7 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import { homeReducers, themeReducers, transactionReducers, navigationReducers, authReducers } from "./reducers";
+import { homeReducers, themeReducers, transactionReducers, navigationReducers, authReducers, inputReducers } from "./reducers";
 
 const reducers = combineReducers({
   api: API.reducer,
@@ -21,12 +21,13 @@ const reducers = combineReducers({
   transactions: transactionReducers,
   navigation: navigationReducers,
   auth: authReducers,
+  input: inputReducers,
 });
 
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["theme", "transactions", "navigation",],
+  whitelist: ["theme", "transactions", "navigation", "input"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

@@ -2,9 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, TextInput, Modal, StyleSheet } from 'react-native';
 import CustomNumberKeyboard from '@/Components/CustomNumberKeyboard';
 import { useNavigation } from '@react-navigation/native'
+import { useDispatch, useSelector } from "react-redux"
+import { addTransaction, resetNewTransaction } from "@/Store/reducers"
+import { RootState } from '@/Store'
 
 export const NumberInputModal = () => {
+  const dispatch = useDispatch()
   const navigation = useNavigation()
+  const newTransaction = useSelector((state: RootState) => state.newTransaction)
   const [inputValue, setInputValue] = useState('');
   const [note, setNote] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(true);
@@ -20,6 +25,12 @@ export const NumberInputModal = () => {
   const handleClose = () => {
     navigation.goBack();
   };
+
+  const handleEnter = async () => {
+    dispatch(addTransaction({ ...newTransaction, amount: Number(inputValue), note: note}))
+    dispatch(resetNewTransaction(null))
+    navigation.goBack()
+  }
 
   return (
     <View style={styles.container}>
@@ -37,7 +48,7 @@ export const NumberInputModal = () => {
             onFocus={() => setIsKeyboardVisible(false)}
             onBlur={() => setIsKeyboardVisible(true)}
           />
-          {isKeyboardVisible && (<CustomNumberKeyboard onPress={handleNumberPress} onBackspace={handleBackspacePress} />)}
+          {isKeyboardVisible && (<CustomNumberKeyboard onPress={handleNumberPress} onBackspace={handleBackspacePress} onEnter={handleEnter} />)}
         </View>
       </Modal>
     </View>

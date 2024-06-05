@@ -52,13 +52,18 @@ export const Record = (props: IRecordProps) => {
                   <View key={id}>
                     <Text>{transaction.type} - ${transaction.amount}</Text>
 
-                    <TouchableOpacity onPress={() => handleRemoveTransaction(id)}>
+                    <Text>Note: {transaction.note} </Text>
+
+                    <Text>Date: {new Date(transaction.transactionDateTime).toISOString().split('T')[0]} </Text>
+
+                    <TouchableOpacity onPress={() => handleRemoveTransaction(id)} style={styles.removeBtn}>
                       <Text>Remove</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => handleEditTransaction(id, { amount: transaction.amount + 10, type: transaction.type })}>
+                    <TouchableOpacity onPress={() => handleEditTransaction(id, { amount: transaction.amount + 10, type: transaction.type })} style={styles.editBtn}>
                       <Text>Edit</Text>
                     </TouchableOpacity>
+
                   </View>
                 )
               })}
@@ -76,5 +81,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  removeBtn: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+  },
+  editBtn: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
   },
 });

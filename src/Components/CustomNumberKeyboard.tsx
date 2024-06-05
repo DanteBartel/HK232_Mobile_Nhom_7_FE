@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { setTransactionDateTime } from '@/Store/reducers'
+import { RootState } from '@/Store'
 
 const numbers = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0']
 
 interface CustomNumberKeyboardProps {
   onPress: (value: string) => void
   onBackspace: () => void
+  onEnter: () => void
 }
 
 function mapNumbers(numbers: string[], onPress: (value: string) => void, onBackspace: () => void) {
@@ -19,33 +23,36 @@ function mapNumbers(numbers: string[], onPress: (value: string) => void, onBacks
   )
 }
 
-const CustomNumberKeyboard: React.FC<CustomNumberKeyboardProps> = ({ onPress, onBackspace }) => {
+function isToday(date: Date) {
+  return date.getFullYear() === new Date().getFullYear() && date.getMonth() === new Date().getMonth() && date.getDate() === new Date().getDate()
+}
 
+// -------------------------------------------------
+
+const CustomNumberKeyboard: React.FC<CustomNumberKeyboardProps> = ({ onPress, onBackspace, onEnter }) => {
   const [showPicker, setShowPicker] = useState(false)
-  let selectedDate: Date = new Date()
+  const dispatch = useDispatch()
+  const selectedDate = useSelector((state: RootState) => state.newTransaction.transactionDateTime)
 
   const onChange = (event: any, date?: Date) => {
     setShowPicker(false)
     if (date) {
-      selectedDate = date
+      dispatch(setTransactionDateTime(date.toISOString()))
     }
   }
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backspaceButton} onPress={() => setShowPicker(true)}>
-        <Text style={styles.backspaceText}>Today</Text>
+        <Text style={styles.backspaceText}>{isToday(new Date(selectedDate)) ? 'Today' : new Date(selectedDate).toISOString().split('T')[0]}</Text>
       </TouchableOpacity>
       {showPicker && (
         <DateTimePicker 
-          value={selectedDate || new Date()}
+          value={new Date(selectedDate) || new Date()}
           mode='date'
           display='default'
           onChange={onChange}
         />
-      )}
-      {selectedDate && (
-        <Text style={{ marginTop: 20 }}>Selected Date: {selectedDate.toDateString()}</Text>
       )}
       <View style={styles.numbersContainer}>
         {mapNumbers(numbers, onPress, onBackspace)}
@@ -53,7 +60,7 @@ const CustomNumberKeyboard: React.FC<CustomNumberKeyboardProps> = ({ onPress, on
           <Text style={styles.numberText}>⌫</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.backspaceButton} onPress={onBackspace}>
+      <TouchableOpacity style={styles.backspaceButton} onPress={onEnter}>
         <Text style={styles.backspaceText}>Confirm</Text>
       </TouchableOpacity>
     </View>

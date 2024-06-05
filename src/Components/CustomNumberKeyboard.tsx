@@ -1,7 +1,8 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
-const numbers = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0']
+const numbers = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0']
 
 interface CustomNumberKeyboardProps {
   onPress: (value: string) => void
@@ -19,13 +20,41 @@ function mapNumbers(numbers: string[], onPress: (value: string) => void, onBacks
 }
 
 const CustomNumberKeyboard: React.FC<CustomNumberKeyboardProps> = ({ onPress, onBackspace }) => {
+
+  const [showPicker, setShowPicker] = useState(false)
+  let selectedDate: Date = new Date()
+
+  const onChange = (event: any, date?: Date) => {
+    setShowPicker(false)
+    if (date) {
+      selectedDate = date
+    }
+  }
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backspaceButton} onPress={() => setShowPicker(true)}>
+        <Text style={styles.backspaceText}>Today</Text>
+      </TouchableOpacity>
+      {showPicker && (
+        <DateTimePicker 
+          value={selectedDate || new Date()}
+          mode='date'
+          display='default'
+          onChange={onChange}
+        />
+      )}
+      {selectedDate && (
+        <Text style={{ marginTop: 20 }}>Selected Date: {selectedDate.toDateString()}</Text>
+      )}
       <View style={styles.numbersContainer}>
         {mapNumbers(numbers, onPress, onBackspace)}
+        <TouchableOpacity style={styles.numberButton} onPress={onBackspace}>
+          <Text style={styles.numberText}>⌫</Text>
+        </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.backspaceButton} onPress={onBackspace}>
-        <Text style={styles.backspaceText}>⌫</Text>
+        <Text style={styles.backspaceText}>Confirm</Text>
       </TouchableOpacity>
     </View>
   )

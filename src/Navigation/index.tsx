@@ -39,8 +39,8 @@ const ApplicationNavigator = () => {
     <NavigationContainer>
       <StatusBar />
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {hasLogin ? (
-          hasSeenWelcome ? (
+        {hasSeenWelcome ? (
+          hasLogin ? (
             <RootStack.Screen
               name={RootScreens.MAIN}
               component={MainNavigator}
@@ -49,28 +49,28 @@ const ApplicationNavigator = () => {
           ) : (
             <>
               <RootStack.Screen
-                name={RootScreens.WELCOME1}
-                component={Welcome1Container}
+                name={RootScreens.LOGIN}
+                component={LoginContainer}
               />
               <RootStack.Screen
-                name={RootScreens.WELCOME2}
-                component={Welcome2Container}
-              />
-              <RootStack.Screen
-                name={RootScreens.WELCOME3}
-                component={Welcome3Container}
+                name={RootScreens.REGISTER}
+                component={RegisterContainer}
               />
             </>
           )
         ) : (
           <>
             <RootStack.Screen
-              name={RootScreens.LOGIN}
-              component={LoginContainer}
+              name={RootScreens.WELCOME1}
+              component={Welcome1Container}
             />
             <RootStack.Screen
-              name={RootScreens.REGISTER}
-              component={RegisterContainer}
+              name={RootScreens.WELCOME2}
+              component={Welcome2Container}
+            />
+            <RootStack.Screen
+              name={RootScreens.WELCOME3}
+              component={Welcome3Container}
             />
           </>
         )}

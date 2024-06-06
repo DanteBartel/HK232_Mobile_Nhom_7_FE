@@ -5,29 +5,28 @@ import { StatusBar } from "expo-status-bar";
 import { HStack, Spinner, Heading } from "native-base";
 import { User } from "@/Services";
 
-import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { removeTransaction, editTransaction } from "@/Store/reducers";
 import { RootState } from "@/Store";
-import { Transaction } from "@/Services";
+import { useDeleteTransactionsMutation, Transaction } from "@/Services";
 
-export interface IRecordProps {
-  data: User | undefined;
-  isLoading: boolean;
-}
-
-export const Record = (props: IRecordProps) => {
-  const { data, isLoading } = props;
-
+export const Record = () => {
   const transactions = useSelector((state: RootState) => state.transactions)
   const dispatch = useDispatch()
+  const [deleteTransactions, { isLoading }] = useDeleteTransactionsMutation()
 
-  const handleRemoveTransaction = (id: number) => {
-    dispatch(removeTransaction(id))
-  }
-
-  const handleEditTransaction = (id: number, changes: Pick<Transaction, 'amount' | 'type'>) => {
-    dispatch(editTransaction({ id, ...changes}))
+  const handleRemoveTransaction = async (id: string) => {
+    try {
+      const result = await deleteTransactions(id)
+      if ("data" in result) {
+        const transaction = result.data
+        dispatch(removeTransaction(transaction._id))
+      } else {
+        console.error("Deleting user records failed: ", result.error)
+      }
+    } catch (err) {
+      console.error("An error occurred during deleting user records:", err)
+    }
   }
 
   return (
@@ -62,10 +61,6 @@ export const Record = (props: IRecordProps) => {
 
                     <TouchableOpacity onPress={() => handleRemoveTransaction(id)} style={styles.removeBtn}>
                       <Text>Remove</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => handleEditTransaction(id, { amount: transaction.amount + 10, type: transaction.type })} style={styles.editBtn}>
-                      <Text>Edit</Text>
                     </TouchableOpacity>
 
                   </View>

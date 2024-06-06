@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Transaction } from "@/Services";
 
-const initialState: Omit<Transaction, 'id' | 'amount' | 'note' | 'category' | 'type'> = {
+const initialState: Omit<Transaction, '_id' | 'amount' | 'note' | 'category' | 'type'> = {
     currency: 'VND',
     transactionDateTime: new Date().toISOString(),
 }

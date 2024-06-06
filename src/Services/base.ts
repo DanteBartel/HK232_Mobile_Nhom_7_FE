@@ -5,8 +5,18 @@ import {
   FetchArgs,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
+import { RootState } from "@/Store";
 
-const baseQuery = fetchBaseQuery({ baseUrl: Config.API_URL });
+const baseQuery = fetchBaseQuery({
+  baseUrl: Config.API_URL,
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.accessToken
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
 
 const baseQueryWithInterceptor = async (
   args: string | FetchArgs,

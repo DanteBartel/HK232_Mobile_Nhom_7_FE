@@ -5,6 +5,7 @@ import { useRoute, useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from "react-redux"
 import { addTransaction, resetNewTransaction } from "@/Store/reducers"
 import { RootState } from '@/Store'
+import { usePostTransactionsMutation, Transaction } from "@/Services"
 
 export const NumberInputModal = () => {
   const dispatch = useDispatch()
@@ -15,6 +16,7 @@ export const NumberInputModal = () => {
   const [inputValue, setInputValue] = useState('')
   const [note, setNote] = useState('')
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(true)
+  const [postTransactions, { isLoading }] = usePostTransactionsMutation()
 
   const handleNumberPress = (value: string) => {
     setInputValue((prev) => prev + value);
@@ -29,10 +31,34 @@ export const NumberInputModal = () => {
   };
 
   const handleEnter = async () => {
-    dispatch(addTransaction({ ...newTransaction, amount: Number(inputValue), note: note, category: category, type: type}))
-    dispatch(resetNewTransaction(null))
-    navigation.goBack()
+    const transactionData: Omit<Transaction, '_id'> = {
+      ...newTransaction,
+      amount: Number(inputValue), 
+      note: note, 
+      category: category, 
+      type: type,
+    }
+
+    try {
+      const result = await postTransactions(transactionData)
+      if ("data" in result) {
+        const transaction = result.data
+        dispatch(addTransaction(transaction))
+        dispatch(resetNewTransaction(null))
+        navigation.goBack()
+      } else {
+        console.error("Posting user records failed: ", result.error)
+      }
+    } catch (err) {
+      console.error("An error occurred during posting user records:", err)
+    }
   }
+
+  if (isLoading) return (
+    <View style={styles.loadingContainer}>
+      <Text>Loading transactions...</Text>
+    </View>
+  )
 
   return (
     <View style={styles.container}>
@@ -85,5 +111,10 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
     backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

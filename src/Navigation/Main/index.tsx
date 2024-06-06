@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React, { useEffect } from "react"
+import { View, Text, StyleSheet } from "react-native"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import { HomeContainer } from "@/Screens/Home";
@@ -9,13 +10,13 @@ import { MeContainer } from "@/Screens/Me";
 import { NumberInputModal } from "@/Screens/AddRecord";
 import { AddRecordScreen } from "@/Screens/AddRecord";
 
-
-import { useDispatch } from "react-redux";
-import { setAccessToken, getAccessToken } from "@/Store/reducers";
-
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHouse, faFile, faChartPie, faPerson, faCirclePlus } from '@/Components'
+
+import { useGetTransactionsMutation, Transaction } from "@/Services"
+import { useDispatch } from 'react-redux'
+import { resetTransactions, addTransactions } from "@/Store/reducers"
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
@@ -95,19 +96,33 @@ const MainTabs = () => {
 
 // @refresh reset
 export const MainNavigator = () => {
-
+  const [getTransactions, { isLoading }] = useGetTransactionsMutation()
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    const initializeAuth = async () => {
-      const token = await getAccessToken()
-      if (token) {
-        dispatch(setAccessToken(token))
+  const fetchTransactions = async () => {
+    try {
+      const result = await getTransactions()
+      dispatch(resetTransactions())
+      if ("data" in result) {
+        const transactions: Transaction[] = result.data
+        dispatch(addTransactions(transactions))
+      } else {
+        console.error("Getting user records failed: ", result.error)
       }
+    } catch (err) {
+      console.error("An error occurred during getting user records:", err)
     }
+  }
 
-    initializeAuth()
-  }, [dispatch])
+  useEffect(() => {
+    fetchTransactions();
+  }, [])
+
+  if (isLoading) return (
+    <View style={styles.loadingContainer}>
+      <Text>Loading transactions...</Text>
+    </View>
+  )
 
   return (
     <Stack.Navigator>
@@ -139,3 +154,11 @@ export const MainNavigator = () => {
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+})

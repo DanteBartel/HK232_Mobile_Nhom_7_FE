@@ -1,2 +1,2 @@
-export * from "./AddRecordContainer"
 export * from "./NumberInputModal"
+export * from "./AddRecordScreen"

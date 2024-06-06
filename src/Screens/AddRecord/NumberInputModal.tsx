@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, TextInput, Modal, StyleSheet } from 'react-native';
-import CustomNumberKeyboard from '@/Components/CustomNumberKeyboard';
-import { useNavigation } from '@react-navigation/native'
+import { CustomNumberKeyboard } from '@/Components';
+import { useRoute, useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from "react-redux"
 import { addTransaction, resetNewTransaction } from "@/Store/reducers"
 import { RootState } from '@/Store'
 
 export const NumberInputModal = () => {
   const dispatch = useDispatch()
+  const route = useRoute()
   const navigation = useNavigation()
   const newTransaction = useSelector((state: RootState) => state.newTransaction)
-  const [inputValue, setInputValue] = useState('');
-  const [note, setNote] = useState('');
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(true);
+  const { category, type } = route.params as { category: string, type: string }
+  const [inputValue, setInputValue] = useState('')
+  const [note, setNote] = useState('')
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(true)
 
   const handleNumberPress = (value: string) => {
     setInputValue((prev) => prev + value);
@@ -27,7 +29,7 @@ export const NumberInputModal = () => {
   };
 
   const handleEnter = async () => {
-    dispatch(addTransaction({ ...newTransaction, amount: Number(inputValue), note: note}))
+    dispatch(addTransaction({ ...newTransaction, amount: Number(inputValue), note: note, category: category, type: type}))
     dispatch(resetNewTransaction(null))
     navigation.goBack()
   }

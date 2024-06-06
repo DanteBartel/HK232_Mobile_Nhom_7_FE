@@ -54,6 +54,10 @@ export const Record = (props: IRecordProps) => {
 
                     <Text>Note: {transaction.note} </Text>
 
+                    <Text>Type: {transaction.type} </Text>
+
+                    <Text>Category: {transaction.category} </Text>
+
                     <Text>Date: {new Date(transaction.transactionDateTime).toISOString().split('T')[0]} </Text>
 
                     <TouchableOpacity onPress={() => handleRemoveTransaction(id)} style={styles.removeBtn}>

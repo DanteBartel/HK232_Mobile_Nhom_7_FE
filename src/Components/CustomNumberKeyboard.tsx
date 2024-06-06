@@ -29,7 +29,7 @@ function isToday(date: Date) {
 
 // -------------------------------------------------
 
-const CustomNumberKeyboard: React.FC<CustomNumberKeyboardProps> = ({ onPress, onBackspace, onEnter }) => {
+export const CustomNumberKeyboard: React.FC<CustomNumberKeyboardProps> = ({ onPress, onBackspace, onEnter }) => {
   const [showPicker, setShowPicker] = useState(false)
   const dispatch = useDispatch()
   const selectedDate = useSelector((state: RootState) => state.newTransaction.transactionDateTime)
@@ -103,5 +103,3 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 })
-
-export default CustomNumberKeyboard
